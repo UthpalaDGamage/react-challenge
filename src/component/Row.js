@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-function Row({ index, remove, itemValue, itemOperator, onUpdateRow }) {
+function Row({
+  index,
+  remove,
+  itemValue,
+  itemOperator,
+  disabled,
+  onUpdateRow,
+}) {
   const [operator, setOperator] = useState(itemOperator);
-  const [isDisable, setDisable] = useState(false);
+  const [isDisable, setDisable] = useState(disabled);
   const [value, setValue] = useState(itemValue);
 
   useEffect(() => {
@@ -15,6 +22,10 @@ function Row({ index, remove, itemValue, itemOperator, onUpdateRow }) {
   useEffect(() => {
     setOperator(itemOperator);
   }, [itemOperator]);
+
+  useEffect(() => {
+    setDisable(disabled);
+  }, [disabled]);
 
   const handleOperatorChange = (operator) => {
     if (operator) {
@@ -30,18 +41,23 @@ function Row({ index, remove, itemValue, itemOperator, onUpdateRow }) {
     }
   };
   const removeRow = (index) => {
-    console.log("inside ROW : removeRow ", index);
     remove(index);
   };
   const handleInputChange = (value) => {
-    console.log("inside ROW : handleInputChange ", value);
     setValue(value);
   };
 
   return (
     <>
-      <li key={index}>
-        <select onChange={(e) => handleOperatorChange(e.target.value)}>
+      <li
+        key={index}
+        className={isDisable ? "row-item row-disabled" : "row-item"}
+      >
+        <select
+          onChange={(e) => handleOperatorChange(e.target.value)}
+          disabled={isDisable}
+          value={operator}
+        >
           <option value="+">+</option>
           <option value="-">-</option>
         </select>
@@ -51,8 +67,11 @@ function Row({ index, remove, itemValue, itemOperator, onUpdateRow }) {
           value={value}
           onChange={(e) => handleInputChange(e.target.value)}
           disabled={isDisable}
+          className="row-input"
         />
-        <button onClick={() => removeRow(index)}>Delete</button>
+        <button onClick={() => removeRow(index)} className="row-btn btn-remove">
+          Delete
+        </button>
         <button onClick={handleDisable}>
           {isDisable ? "Enable" : "Disable"}
         </button>
